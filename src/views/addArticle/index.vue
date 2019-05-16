@@ -119,6 +119,7 @@ export default {
         addArticle(this.article).then(res => {});
       }
       localStorage.removeItem("tempData");
+      this.$router.push('/admin/article');
       //   let res;
       //   if(this.article._id != ''){
       //     res = await this.$http.api_alter_article(this.article);
