@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 
-const TokenKey = "Admin-Token";
+const TokenKey = "blog-Admin-Token";
 
 export function getToken() {
   let tokenName = "";

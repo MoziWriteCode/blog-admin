@@ -1,5 +1,5 @@
 <template>
-  <div class="add_article_page">
+  <div class="app-container add_article_page">
     <ul class="article_info_box">
       <li>
         <span class="article_title">标题:</span>
@@ -16,11 +16,11 @@
         <span class="article_title">状态:</span>
         <label role="radio">
           <input type="radio" name="state" v-model="article.article_state" value="1" checked>
-          <span>Published</span>
+          <span>发表</span>
         </label>
         <label role="radio">
           <input type="radio" name="state" v-model="article.article_state" value="0">
-          <span>Draft</span>
+          <span>草稿</span>
         </label>
       </li>
       <li>
@@ -46,8 +46,8 @@
 
 <script>
 import SimpleMDE from "simplemde";
-import "../../assets/markdown.css";
-import "../../assets/simplemde.min.css";
+import "../../assets/style/markdown.css";
+import "../../assets/style/simplemde.min.css";
 import { mapGetters } from "vuex";
 import { getArticle, editArticle, addArticle } from "@/api/article";
 
@@ -90,7 +90,6 @@ export default {
   },
   methods: {
     getFile(e) {
-      let _self = this;
       let obj = e.target || null;
       let fileName = obj.files[0].name;
       if (fileName.slice(fileName.lastIndexOf(".") + 1).toLowerCase() != "md") {
@@ -112,29 +111,13 @@ export default {
     },
     save() {
       this.article.article_content = simplemde.value();
-      console.log(this.article);
       if (this.article._id !== "") {
-        editArticle(this.article).then(res => {});
+        editArticle(this.article);
       } else {
-        addArticle(this.article).then(res => {});
+        addArticle(this.article);
       }
       localStorage.removeItem("tempData");
-      this.$router.push('/admin/article');
-      //   let res;
-      //   if(this.article._id != ''){
-      //     res = await this.$http.api_alter_article(this.article);
-      //   }else {
-      //     res = await this.$http.api_add_article(this.article);
-      //   }
-      //   let {code, msg, data = []} = res.data;
-      //   alert(msg);
-      //   if(code == 200){
-      //     if(this.article._id == ''){
-      //       localStorage.removeItem("tempData");
-      //     }
-      //     // 跳转到文章列表
-      //     this.$router.push('/admin/article');
-      //   }
+      this.$router.push("/admin/article");
     },
     auto_save() {
       this.timer = setInterval(() => {
@@ -150,19 +133,16 @@ export default {
     },
     init_page() {
       this.$store.dispatch("getTags");
-      let { id = "" } = this.$route.params;
+      let { id = "" } = this.$route.query;
       if (id != "") {
         getArticle(id).then(res => {
           console.log(res);
+          this.article = res;
+          this.article.article_tags = this.article.article_tags.map(item => {
+            return item._id;
+          });
+          simplemde.value(this.article.article_content);
         });
-        // let {code, msg, data =[]} = res.data;
-        // if(code == 200 && data.length != 0){
-        //   this.article = data[0];
-        //   this.article.article_tags = this.article.article_tags.map( item => {
-        //     return item._id;
-        //   })
-        //   simplemde.value(this.article.article_content);
-        // }
       } else {
         let tempData = JSON.parse(localStorage.getItem("tempData"));
         if (tempData != null) {
@@ -175,7 +155,6 @@ export default {
         this.article._id = "";
         this.article.article_create_time = "";
         this.article.article_update_time = "";
-        // simplemde.value("");
         // 添加到自动保存
         this.auto_save();
       }
@@ -193,14 +172,12 @@ export default {
     clearInterval(this.timer);
   },
   watch: {
-    $route(to, from) {
+    $route() {
       this.init_page();
     }
   }
 };
 </script>
-
-
 
 <style lang="scss">
 .add_article_page {

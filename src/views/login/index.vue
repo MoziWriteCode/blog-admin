@@ -4,21 +4,16 @@
       <p class="login_title">用户登录</p>
       <div class="login_item">
         <p class="form_title">账号</p>
-        <input type="text" v-model="userInfo.user_id" />
+        <input type="text" v-model="userInfo.user_id">
       </div>
       <div class="login_item">
         <p class="form_title">密码</p>
-        <input type="password" v-model="userInfo.user_pwd" />
+        <input type="password" v-model="userInfo.user_pwd">
       </div>
       <div class="login_item">
         <p class="form_title">验证码</p>
-        <input type="text" v-model="userInfo.code" @keyup.enter="login" />
-        <img
-          :src="check_code_img"
-          alt="验证码"
-          class="ver-code"
-          @click="verifyCode"
-        />
+        <input type="text" v-model="userInfo.code" @keyup.enter="login">
+        <img :src="check_code_img" alt="验证码" class="ver-code" @click="verifyCode">
       </div>
       <div class="login_item">
         <button @click="login">登录</button>
@@ -34,9 +29,9 @@ export default {
   data() {
     return {
       userInfo: {
-        user_id: "",
+        user_id: "admin",
         user_name: "admin",
-        user_pwd: "",
+        user_pwd: "1",
         code: ""
       },
       check_code_img: "",

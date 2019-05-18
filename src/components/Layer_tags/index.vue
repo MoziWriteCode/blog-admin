@@ -28,27 +28,27 @@
 
 <script>
 export default {
-  props:{
-    layser_data:{
-      default:{
-        _id: '',
-        tags_name: '',
-        tags_desc: ''
+  props: {
+    layser_data: {
+      default: {
+        _id: "",
+        tags_name: "",
+        tags_desc: ""
       }
     },
     layser_title: {
-      default:'添加标签'
+      default: "添加标签"
     }
   },
-  methods:{
-    close_layer(){
-      this.$emit("close_layer",false)
+  methods: {
+    close_layer() {
+      this.$emit("close_layer", false);
     },
     save() {
-      this.$emit('save', this.layser_data)
+      this.$emit("save", this.layser_data);
     }
   }
-}
+};
 </script>
 
 
@@ -59,11 +59,12 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
   color: #000;
+  z-index: 8;
   .box {
     width: 600px;
-    box-shadow: 2px 0 20px #000;  
+    box-shadow: 2px 0 20px #000;
     margin: 100px auto;
     background: #fff;
     .layer_top {
@@ -89,7 +90,7 @@ export default {
         .form_item_content {
           flex: 1;
           padding: 5px 20px 5px 0;
-          input{
+          input {
             width: 100%;
             height: 29px;
             box-sizing: border-box;
@@ -101,7 +102,7 @@ export default {
             border: none;
             border-bottom: 1px dotted #ccc;
             outline: none;
-            transition: border-bottom-color .6s;
+            transition: border-bottom-color 0.6s;
             &:focus {
               border-bottom-color: red;
             }
@@ -119,6 +120,5 @@ export default {
       }
     }
   }
-
 }
 </style>

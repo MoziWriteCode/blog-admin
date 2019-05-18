@@ -1,30 +1,30 @@
 <template>
-  <div class="article_page">
+  <div class="app-container article_page">
     <ul class="search_box">
       <li>
         <span class="search_title">标签:</span>
         <label role="radio">
           <input type="radio" name="tags" v-model="searchJson.tag" value checked>
-          <span>ALL</span>
+          <span>全部</span>
         </label>
         <label role="radio" v-for=" item in tags" :key="item._id">
           <input type="radio" name="tags" v-model="searchJson.tag" :value="item._id">
-          <span>{{item.tags_name}}</span>
+          <span>{{ item.tags_name }}</span>
         </label>
       </li>
       <li>
         <span class="search_title">状态:</span>
         <label role="radio">
           <input type="radio" name="state" value v-model="searchJson.state" checked>
-          <span>ALL</span>
+          <span>全部</span>
         </label>
         <label role="radio">
           <input type="radio" name="state" value="1" v-model="searchJson.state">
-          <span>Published</span>
+          <span>发表</span>
         </label>
         <label role="radio">
           <input type="radio" name="state" value="0" v-model="searchJson.state">
-          <span>Draft</span>
+          <span>草稿</span>
         </label>
       </li>
       <li>
@@ -49,9 +49,9 @@
         <li class="article_operation">操作</li>
       </ul>
       <ul class="article_item" v-for="item in article_list" :key="item._id">
-        <li class="article_title">{{item.article_title}}</li>
-        <li class="article_crate">{{item.article_create_time | formatDate}}</li>
-        <li class="article_update">{{item.article_update_time | formatDate}}</li>
+        <li class="article_title">{{ item.article_title }}</li>
+        <li class="article_crate">{{ item.article_create_time | formatDate }}</li>
+        <li class="article_update">{{ item.article_update_time | formatDate }}</li>
         <li class="article_tags">
           <a
             href="javascript:void(0);"
@@ -59,10 +59,10 @@
             :key="tag._id"
             :title="tag.tags_desc"
           >
-            <span>{{tag.tags_name}}</span>
+            <span>{{ tag.tags_name }}</span>
           </a>
         </li>
-        <li class="article_state">{{item.article_state | formatState}}</li>
+        <li class="article_state">{{ item.article_state | formatState }}</li>
         <div class="article_operation">
           <button class="btn look">
             <a target="_blank">查看</a>
@@ -85,13 +85,13 @@
 import Paginator from "@/components/Paginator";
 import { mapGetters } from "vuex";
 import { getArticles } from "@/api/article";
+import { parseTime } from "@/utils/";
 export default {
   components: { Paginator },
   created() {
     this.$nextTick(() => {
-      this.$store.dispatch("getTags").then( ()=> {
-      this.get_article();
-
+      this.$store.dispatch("getTags").then(() => {
+        this.get_article();
       });
     });
   },
@@ -117,22 +117,10 @@ export default {
   },
   filters: {
     formatDate(val) {
-      let time = new Date(Number(val));
-      let y = time.getFullYear();
-      let m = time.getMonth() + 1;
-      let d = time.getDate();
-      let h = time.getHours();
-      let mm = time.getMinutes();
-      let s = time.getSeconds();
-      m = m < 10 ? "0" + m : m;
-      d = d < 10 ? "0" + d : d;
-      h = h < 10 ? "0" + h : h;
-      mm = mm < 10 ? "0" + mm : mm;
-      s = s < 10 ? "0" + s : s;
-      return y + "-" + m + "-" + d + " " + h + ":" + mm + ":" + s;
+      return parseTime(parseInt(val));
     },
     formatState(val) {
-      return val == 0 ? "Draft" : "Published";
+      return val == 0 ? "草稿" : "发表";
     }
   },
   methods: {
@@ -151,7 +139,10 @@ export default {
       this.get_article();
     },
     alter(item) {
-      this.$router.push(`/admin/addarticle/${item._id}`);
+      this.$router.push({
+        path: `/admin/addArticle`,
+        query: { id: item._id }
+      });
     },
     async del(item) {
       let res = await this.$http.api_del_article(item._id);
@@ -186,7 +177,6 @@ export default {
     li {
       font-size: 18px;
       border-bottom: 1px dotted #666;
-      padding: 5px 0;
       height: 50px;
       line-height: 50px;
       label {
@@ -217,7 +207,10 @@ export default {
     }
   }
   .article_list {
-    padding-top: 20px;
+    .table_th {
+      font-weight: 700;
+      font-size: 18px !important;
+    }
     .article_item {
       display: flex;
       align-items: center;
@@ -226,21 +219,27 @@ export default {
       word-break: break-all;
       border-bottom: 1px solid #ccc;
       padding: 10px 0;
+      font-size: 11px;
       .article_title {
-        width: 200px;
+        width: 260px;
+        font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       .article_crate,
       .article_update {
-        width: 300px;
+        width: 150px;
       }
-      .article_tags,
+      .article_tags {
+        width: 200px;
+      }
       .article_state {
-        width: 100px;
+        width: 80px;
       }
       .article_tags {
         span {
-          display: block;
-          margin: 5px auto;
+          padding: 5px;
         }
       }
       .article_operation {

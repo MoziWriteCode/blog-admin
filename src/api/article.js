@@ -11,7 +11,7 @@ export function getArticle(id) {
   return request({
     url: "api/article/",
     method: "get",
-    params: id
+    params: { id: id }
   });
 }
 export function addArticle(data) {

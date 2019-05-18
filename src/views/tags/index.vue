@@ -1,5 +1,5 @@
 <template>
-  <div class="tags_page">
+  <div class="app-container tags_page">
     <div class="tool">
       <button class="btn" @click="addTags">添加标签</button>
     </div>
