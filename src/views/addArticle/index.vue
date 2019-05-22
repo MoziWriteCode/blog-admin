@@ -67,7 +67,8 @@ export default {
         article_state: "",
         article_tags: [],
         article_title: "",
-        article_update_time: ""
+        article_update_time: "",
+        article_ready: 0
       },
       article_info: {
         cover: ""

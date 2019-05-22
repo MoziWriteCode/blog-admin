@@ -84,7 +84,7 @@
 <script>
 import Paginator from "@/components/Paginator";
 import { mapGetters } from "vuex";
-import { getArticles } from "@/api/article";
+import { getArticles, delArticle } from "@/api/article";
 import { parseTime } from "@/utils/";
 export default {
   components: { Paginator },
@@ -144,16 +144,13 @@ export default {
         query: { id: item._id }
       });
     },
-    async del(item) {
-      let res = await this.$http.api_del_article(item._id);
-      let { code, msg } = res.data;
-      alert(msg);
-      if (code == 200) {
+    del(item) {
+      delArticle(item._id).then(res => {
         this.article_list.splice(
           this.article_list.findIndex(i => i._id === item._id),
           1
         );
-      }
+      });
     }
   }
 };
