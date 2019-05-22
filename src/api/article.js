@@ -30,8 +30,8 @@ export function editArticle(data) {
 }
 export function delArticle(id) {
   return request({
-    url: "api/article/edit",
+    url: "api/article/del",
     method: "post",
-    params: id
+    params: { id: id }
   });
 }
