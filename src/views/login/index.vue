@@ -57,12 +57,10 @@ export default {
       this.$store
         .dispatch("Login", this.userInfo)
         .then(() => {
-          this.loading = false;
           this.$router.push({ path: this.redirect || "/" });
         })
         .catch(error => {
-          console.log(error);
-          this.loading = false;
+          alert(error);
         });
     },
     register() {

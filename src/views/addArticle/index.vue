@@ -54,6 +54,9 @@ import { getArticle, editArticle, addArticle } from "@/api/article";
 let simplemde = null;
 export default {
   created() {
+    if (localStorage.getItem("tempData")) {
+      localStorage.removeItem("tempData");
+    }
     this.init_page();
   },
   data() {
@@ -113,10 +116,24 @@ export default {
     save() {
       this.article.article_content = simplemde.value();
       if (this.article._id !== "") {
-        editArticle(this.article);
+        editArticle(this.article)
+          .then(() => {
+            this.to();
+          })
+          .catch(err => {
+            alert(err);
+          });
       } else {
-        addArticle(this.article);
+        addArticle(this.article)
+          .then(() => {
+            this.to();
+          })
+          .catch(err => {
+            alert(err);
+          });
       }
+    },
+    to() {
       localStorage.removeItem("tempData");
       this.$router.push("/admin/article");
     },
@@ -136,14 +153,18 @@ export default {
       this.$store.dispatch("getTags");
       let { id = "" } = this.$route.query;
       if (id != "") {
-        getArticle(id).then(res => {
-          console.log(res);
-          this.article = res;
-          this.article.article_tags = this.article.article_tags.map(item => {
-            return item._id;
+        getArticle(id)
+          .then(res => {
+            console.log(res);
+            this.article = res;
+            this.article.article_tags = this.article.article_tags.map(item => {
+              return item._id;
+            });
+            simplemde.value(this.article.article_content);
+          })
+          .catch(err => {
+            alert(err);
           });
-          simplemde.value(this.article.article_content);
-        });
       } else {
         let tempData = JSON.parse(localStorage.getItem("tempData"));
         if (tempData != null) {

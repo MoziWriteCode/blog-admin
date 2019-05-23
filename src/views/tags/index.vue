@@ -32,7 +32,7 @@
  
  <script>
 import LayerTags from "@/components/Layer_tags";
-import { addTags } from "@/api/tags";
+import { addTags, editTags, delTags } from "@/api/tags";
 import { mapGetters } from "vuex";
 export default {
   created() {
@@ -72,33 +72,44 @@ export default {
       this.layer_mark = true;
     },
     save(data) {
+      this.layer_mark = false;
       let res = {};
       if (data._id == "") {
-        addTags({ tags_name: data.tags_name, tags_desc: data.tags_desc }).then(
-          res => {
-            console.log(res);
-          }
-        );
+        addTags({ tags_name: data.tags_name, tags_desc: data.tags_desc })
+          .then(res => {
+            this.getTags();
+          })
+          .catch(err => {
+            alert(err);
+          });
       } else {
-        this.$http.api_alter_tags({
+        editTags({
           _id: data._id,
           tags_name: data.tags_name,
           tags_desc: data.tags_desc
-        });
+        })
+          .then(res => {
+            this.getTags();
+          })
+          .catch(err => {
+            alert(err);
+          });
       }
     },
-    async del(item) {
+    del(item) {
       if (confirm(`是否确认删除标签名为: ${item.tags_name} 这个标签？`)) {
-        let res = await this.$http.api_del_tags(item);
-        let { code = 0, msg = "" } = res.data;
-        alert(msg);
-        if (code == 200) {
-          this.tags.forEach((item2, i, arr) => {
-            if (item2._id == item._id) {
-              arr.splice(i, 1);
-            }
+        delTags(item._id)
+          .then(() => {
+            this.tags.forEach((item2, i, arr) => {
+              if (item2._id == item._id) {
+                arr.splice(i, 1);
+              }
+            });
+          })
+          .catch(err => {
+            alert(err);
           });
-        }
+        this.layer_mark = false;
       }
     }
   },

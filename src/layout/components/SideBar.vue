@@ -13,7 +13,7 @@
         <router-link to="/admin/tags">标签管理</router-link>
       </li>
       <li>
-        <router-link to="/admin/setting">全局设置</router-link>
+        <!-- <router-link to="/admin/setting">全局设置</router-link> -->
       </li>
       <li>
         <router-link to="/admin/addArticle">写文章</router-link>

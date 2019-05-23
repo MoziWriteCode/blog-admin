@@ -1,10 +1,9 @@
 import request from "@/utils/request";
 
-export function getTags(data) {
+export function getTags() {
   return request({
     url: "api/tag/",
-    method: "get",
-    data: data
+    method: "get"
   });
 }
 export function addTags(data) {
@@ -21,10 +20,10 @@ export function editTags(data) {
     data: data
   });
 }
-export function delTags(data) {
+export function delTags(id) {
   return request({
     url: "api/tag/del",
     method: "post",
-    data: data
+    params: { id: id }
   });
 }
