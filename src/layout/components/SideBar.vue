@@ -6,23 +6,29 @@
       </router-link>
     </div>
     <ul class="nav">
-      <li>
-        <router-link to="/admin/article">文章管理</router-link>
-      </li>
-      <li>
-        <router-link to="/admin/tags">标签管理</router-link>
-      </li>
-      <li>
-        <!-- <router-link to="/admin/setting">全局设置</router-link> -->
-      </li>
-      <li>
-        <router-link to="/admin/addArticle">写文章</router-link>
+      <li v-for="(item, index) in navRoute" :key="index">
+        <router-link :to="item.path" :class="[item.path === currentPath ? 'current': '']">{{item.name}}</router-link>
       </li>
     </ul>
   </div>
 </template>
 <script>
-export default {};
+import constantRouterMap from "@/router/router";
+import { mapGetters } from 'vuex';
+export default {
+  data(){
+    let nav = constantRouterMap.filter(route => !route.hidden);
+    if(nav.length === 1) {
+      nav = nav[0].children
+    }
+    return{
+      navRoute:nav
+    }
+  },
+  computed:{
+    ...mapGetters(['currentPath'])
+  }
+};
 </script>
 <style lang="scss" scoped>
 .sidebar {
@@ -58,6 +64,9 @@ export default {};
       &:hover {
         color: rgb(28, 146, 214);
       }
+    }
+    .current{
+      color: rgb(28, 146, 214);
     }
     .router-link-exact-active {
       color: rgb(28, 146, 214);

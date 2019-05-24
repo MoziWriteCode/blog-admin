@@ -64,7 +64,7 @@
         </li>
         <li class="article_state">{{ item.article_state | formatState }}</li>
         <div class="article_operation">
-          <button class="btn look">
+          <button class="btn look" v-if="item.article_state === '1'">
             <a target="_blank">查看</a>
           </button>
           <button class="btn alter" @click="alter(item)">修改</button>

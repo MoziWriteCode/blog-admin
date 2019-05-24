@@ -34,6 +34,7 @@ export default {
         user_pwd: "1",
         code: ""
       },
+      redirect: undefined,
       check_code_img: "",
       check_code_token: ""
     };
@@ -42,6 +43,14 @@ export default {
     this.$nextTick(() => {
       this.verifyCode();
     });
+  },
+  watch: {
+    $route: {
+      handler: function(route) {
+        this.redirect = route.query && route.query.redirect;
+      },
+      immediate: true
+    }
   },
   methods: {
     login() {
