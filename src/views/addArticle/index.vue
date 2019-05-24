@@ -54,10 +54,9 @@ import { getArticle, editArticle, addArticle } from "@/api/article";
 let simplemde = null;
 export default {
   created() {
-    if (localStorage.getItem("tempData")) {
-      localStorage.removeItem("tempData");
-    }
-    this.init_page();
+    this.$nextTick(() => {
+      this.removeLocalStorage();
+    });
   },
   data() {
     return {
@@ -113,6 +112,25 @@ export default {
         }
       };
     },
+    removeLocalStorage() {
+      if (localStorage.getItem("tempData")) {
+        localStorage.removeItem("tempData");
+        this.article_content = "";
+        this.article = {
+          _id: "",
+          article_content: "",
+          article_cover: "",
+          article_create_time: "",
+          article_desc: "",
+          article_state: "",
+          article_tags: [],
+          article_title: "",
+          article_update_time: "",
+          article_ready: 0
+        };
+      }
+      this.init_page();
+    },
     save() {
       this.article.article_content = simplemde.value();
       if (this.article._id !== "") {
@@ -155,7 +173,6 @@ export default {
       if (id != "") {
         getArticle(id)
           .then(res => {
-            console.log(res);
             this.article = res;
             this.article.article_tags = this.article.article_tags.map(item => {
               return item._id;
@@ -166,17 +183,21 @@ export default {
             alert(err);
           });
       } else {
-        let tempData = JSON.parse(localStorage.getItem("tempData"));
-        if (tempData != null) {
-          this.article.article_title = tempData.article_title || "";
-          this.article.article_tags = tempData.article_tags || [];
-          this.article.article_state = tempData.article_state || "";
-          this.article.article_cover = tempData.article_cover || "";
-          this.article.article_content = tempData.article_content || "";
-        }
-        this.article._id = "";
-        this.article.article_create_time = "";
-        this.article.article_update_time = "";
+        localStorage.removeItem("tempData");
+        this.article_content = "";
+        this.article = {
+          _id: "",
+          article_content: "",
+          article_cover: "",
+          article_create_time: "",
+          article_desc: "",
+          article_state: "",
+          article_tags: [],
+          article_title: "",
+          article_update_time: "",
+          article_ready: 0
+        };
+        simplemde.value("");
         // 添加到自动保存
         this.auto_save();
       }
@@ -194,8 +215,8 @@ export default {
     clearInterval(this.timer);
   },
   watch: {
-    $route() {
-      this.init_page();
+    $route(val, old) {
+      this.removeLocalStorage();
     }
   }
 };
