@@ -36,6 +36,17 @@
     <div class="article_content">
       <textarea id="article_content" v-initEdit v-model="article.article_content"></textarea>
     </div>
+    <div class="article_content">
+      <y-markdown
+        :mdValuesP="article_content"
+        :fullPageStatusP="false"
+        :editStatusP="true"
+        :previewStatusP="true"
+        :navStatusP="true"
+        :icoStatusP="true"
+        @childevent="childEventHandler"
+      ></y-markdown>
+    </div>
     <div class="tool">
       <input type="file" @change="getFile" id="uploadMD">
       <label for="uploadMD">上传MD</label>
@@ -92,6 +103,10 @@ export default {
     }
   },
   methods: {
+    childEventHandler(res){
+      console.log(res)
+      this.article.article_content = res.mdValue;
+    },
     getFile(e) {
       let obj = e.target || null;
       let fileName = obj.files[0].name;
@@ -132,7 +147,7 @@ export default {
       this.init_page();
     },
     save() {
-      this.article.article_content = simplemde.value();
+      // this.article.article_content = simplemde.value();
       if (this.article._id !== "") {
         editArticle(this.article)
           .then(() => {
@@ -174,6 +189,7 @@ export default {
         getArticle(id)
           .then(res => {
             this.article = res;
+            this.article_content = res.article_content;
             this.article.article_tags = this.article.article_tags.map(item => {
               return item._id;
             });

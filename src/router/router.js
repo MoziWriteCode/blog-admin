@@ -55,6 +55,12 @@ const constantRouterMap = [
         component: () => import("@/views/addArticle/index"),
         name: "添加文章",
         meta: { title: "添加文章", icon: "index" }
+      },
+      {
+        path: "/admin/setting",
+        component: () => import("@/views/setting/index"),
+        name: "设置",
+        meta: { title: "设置", icon: "index" }
       }
     ]
   }
