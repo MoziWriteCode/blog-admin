@@ -91,7 +91,6 @@ export default {
   },
   methods: {
     childEventHandler(res) {
-      console.log(res);
       this.article.article_markdown = res.mdValue;
       this.article.article_html = res.htmlValue;
     },
