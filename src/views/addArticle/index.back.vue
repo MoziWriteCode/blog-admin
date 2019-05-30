@@ -34,17 +34,17 @@
       </li>
     </ul>
     <div class="article_content">
+      <textarea id="article_content" v-initEdit v-model="article.article_content"></textarea>
+    </div>
+    <div class="article_content">
       <y-markdown
-        ref="markdown"
-        :mdValuesP="article.article_markdown"
+        :mdValuesP="article_content"
         :fullPageStatusP="false"
         :editStatusP="true"
         :previewStatusP="true"
         :navStatusP="true"
         :icoStatusP="true"
         @childevent="childEventHandler"
-        @imgAdd="imgAdd"
-        @delImage="delIMage"
       ></y-markdown>
     </div>
     <div class="tool">
@@ -56,11 +56,13 @@
 </template>
 
 <script>
+import SimpleMDE from "simplemde";
 import "../../assets/style/markdown.css";
+import "../../assets/style/simplemde.min.css";
 import { mapGetters } from "vuex";
 import { getArticle, editArticle, addArticle } from "@/api/article";
-import { addImage, delImage } from "@/api/uploadImage";
 
+let simplemde = null;
 export default {
   created() {
     this.$nextTick(() => {
@@ -71,8 +73,7 @@ export default {
     return {
       article: {
         _id: "",
-        article_markdown: "",
-        article_html: "",
+        article_content: "",
         article_cover: "",
         article_create_time: "",
         article_desc: "",
@@ -85,39 +86,26 @@ export default {
       article_info: {
         cover: ""
       },
-      article_markdown: "",
+      article_content: "",
       timer: 0
     };
   },
+  directives: {
+    initEdit: {
+      inserted(el) {
+        simplemde = new SimpleMDE({
+          element: el
+        });
+        document
+          .getElementsByClassName("editor-preview-side")[0]
+          .classList.add("markdown-body");
+      }
+    }
+  },
   methods: {
-    childEventHandler(res) {
-      console.log(res);
-      this.article.article_markdown = res.mdValue;
-      this.article.article_html = res.htmlValue;
-    },
-    imgAdd(file) {
-      let formdata = new FormData();
-      formdata.append("file", file);
-      addImage(formdata)
-        .then(res => {
-          console.log(res);
-          let file_url = res.file_url;
-          let image_id = res._id;
-          let obj = { name: file.name, url: file_url, id: image_id };
-          this.$refs["markdown"].$callbackAddImage(obj);
-        })
-        .catch(error => {
-          console.log("image upload error", error);
-        });
-    },
-    delIMage(image) {
-      delImage(image.id)
-        .then(res => {
-          console.log(res);
-        })
-        .catch(error => {
-          console.log("image upload error", error);
-        });
+    childEventHandler(res){
+      console.log(res)
+      this.article.article_content = res.mdValue;
     },
     getFile(e) {
       let obj = e.target || null;
@@ -133,7 +121,7 @@ export default {
         let result = this.result;
         try {
           // 缓存
-          this.article.article_markdown = result;
+          simplemde.value(result);
         } catch (e) {
           console.log("Storage failed: " + e);
         }
@@ -142,11 +130,10 @@ export default {
     removeLocalStorage() {
       if (localStorage.getItem("tempData")) {
         localStorage.removeItem("tempData");
-        this.article_markdown = "";
+        this.article_content = "";
         this.article = {
           _id: "",
-          article_markdown: "",
-          article_html: "",
+          article_content: "",
           article_cover: "",
           article_create_time: "",
           article_desc: "",
@@ -160,6 +147,7 @@ export default {
       this.init_page();
     },
     save() {
+      // this.article.article_content = simplemde.value();
       if (this.article._id !== "") {
         editArticle(this.article)
           .then(() => {
@@ -189,8 +177,7 @@ export default {
           article_tags: this.article.article_tags,
           article_state: this.article.article_state,
           article_cover: this.article.article_cover,
-          article_markdown: this.article.article_markdown,
-          article_html: this.article.article_html
+          article_content: simplemde.value()
         };
         localStorage.setItem("tempData", JSON.stringify(tempData));
       }, 10000);
@@ -202,21 +189,21 @@ export default {
         getArticle(id)
           .then(res => {
             this.article = res;
-            this.article_markdown = res.article_markdown;
+            this.article_content = res.article_content;
             this.article.article_tags = this.article.article_tags.map(item => {
               return item._id;
             });
+            simplemde.value(this.article.article_content);
           })
           .catch(err => {
             alert(err);
           });
       } else {
         localStorage.removeItem("tempData");
-        this.article_markdown = "";
+        this.article_content = "";
         this.article = {
           _id: "",
-          article_markdown: "",
-          article_html: "",
+          article_content: "",
           article_cover: "",
           article_create_time: "",
           article_desc: "",
@@ -226,6 +213,7 @@ export default {
           article_update_time: "",
           article_ready: 0
         };
+        simplemde.value("");
         // 添加到自动保存
         this.auto_save();
       }
