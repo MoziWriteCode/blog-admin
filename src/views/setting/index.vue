@@ -27,36 +27,26 @@
   </div>
 </template>
 <script>
-import axios from "axios";
 import { getToken } from "@/utils/auth";
+import { master } from "@/api/user";
+import { mapGetters } from "vuex";
 export default {
   data() {
     return {
       admin_pwd: {}
     };
   },
+  computed: {
+    ...mapGetters(["userID"])
+  },
   methods: {
-    alter_admin_pwd(){},
-    addFileImage($e) {
-      let file = $e.target.files[0]
-      var formdata = new FormData();
-      formdata.append("file", file);
-      axios({
-        url: `${process.env.VUE_APP_API}/api/uploadImage/add`,
-        method: "post",
-        data: formdata,
-        headers: {
-          "Content-Type":
-            "multipart/form-data;boundary = " + new Date().getTime(),
-          Authorization: getToken()
-        }
-      })
-        .then(res => {
-          console.log(res);
-        })
-        .catch(error => {
-          console.log("image upload error", error);
+    alter_admin_pwd() {
+      this.admin_pwd.user_id = this.userID;
+      master(this.admin_pwd).then(() => {
+        this.$store.dispatch("LogOut").then(() => {
+          location.reload(); // 为了重新实例化vue-router对象 避免bug
         });
+      });
     }
   }
 };

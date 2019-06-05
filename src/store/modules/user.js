@@ -10,6 +10,9 @@ const user = {
   mutations: {
     SET_TOKEN(state, token) {
       state.token = token;
+    },
+    SET_USER_ID(state, user_id) {
+      state.user_id = user_id;
     }
   },
   actions: {
@@ -19,6 +22,7 @@ const user = {
           .then(res => {
             setToken(res.token);
             commit("SET_TOKEN", res.token);
+            commit("SET_USER_ID", res.user_id);
             resolve();
           })
           .catch(error => {
@@ -29,6 +33,7 @@ const user = {
     LogOut({ commit }) {
       return new Promise(resolve => {
         commit("SET_TOKEN", "");
+        commit("SET_USER_ID", "");
         removeToken();
         resolve();
       });
